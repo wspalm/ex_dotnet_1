@@ -1,0 +1,78 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/producttype/index'>producttype</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>edit</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field v-model="producttype.productTypeName" label="product type" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_producttype' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    producttype:{}
+                    ,
+                    
+                }//edata
+                ,
+                created(){
+                  this.producttype = @Html.Raw(Json.Serialize(@ViewBag.producttype));
+                     
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_producttype(){
+                   
+                    var url = '/producttype/edit';
+                    var param= this.producttype;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/producttype/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

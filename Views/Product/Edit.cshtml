@@ -1,0 +1,102 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/product/index'>
+        Back</a></li>
+        <li class='breadcrumb-item'>
+        Product Editor</a></li>
+        
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+            <!--prod is used instead of product for myown better understanding-->
+
+<v-text-field v-model="prod.productID" label="id" readonly ></v-text-field>
+<v-text-field v-model="prod.productName" label="name" ></v-text-field>
+
+<v-text-field v-model="prod.qty" label="qty" ></v-text-field>
+
+<v-text-field v-model="prod.price" label="price" ></v-text-field>
+
+<v-select return-object
+          v-model="select_productType"
+          :items="productTypes"
+          item-text="productTypeName"
+          menu-props="auto"
+          single-line
+          label="productTypeId"
+          show="productTypeName"            
+  ></v-select>
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_product' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    prod:{} //this is not array because we want to use it as the object{}
+                    ,
+                    productTypes:[]
+                    ,
+                    select_productType: {}
+                    ,
+                    
+                }//edata
+                ,
+                created(){
+                  this.prod = @Html.Raw(Json.Serialize(@ViewBag.product));
+                  this.productTypes = @Html.Raw(Json.Serialize(@ViewBag.productTypes));
+                  this.select_productType = @Html.Raw(Json.Serialize(@ViewBag.select_productType));                     
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_product(){
+                    this.prod.productTypeId = this.select_productType.productTypeId;
+                    var url = '/product/edit';
+                    var param= this.prod;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/product/index';
+                          }
+                          else{
+                             alert(res.exception);                             
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

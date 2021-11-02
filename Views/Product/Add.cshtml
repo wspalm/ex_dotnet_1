@@ -1,0 +1,100 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/product'>Back</a></li>
+        <li class='breadcrumb-item'>This is the page for product addition</li>
+        
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+            <!--prod is used instead of product for myown better understanding-->
+            <v-text-field v-model="prod.productName" label="name" ></v-text-field>
+
+<v-text-field v-model="prod.qty" label="qty" ></v-text-field>
+
+<v-text-field v-model="prod.price" label="price" ></v-text-field>
+
+<v-select return-object
+          v-model="select_productType"
+          :items="productTypes"
+          item-text="productTypeName"
+          menu-props="auto"
+          single-line
+          label="productTypeId"
+          show="productTypeName" 
+           
+></v-select>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='add_product' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    prod:{} //this is not array because we want to send the object{}
+                    , //becaue prod will have to attribute from v-model=prod.attribute
+                    productTypes: []
+                    ,
+                    select_productType: {}
+                    ,
+                    
+                }//edata
+                ,
+                created(){
+                     this.productTypes = @Html.Raw(Json.Serialize(@ViewBag.productTypes));
+                     this.select_productType = this.productTypes[0];
+                }//ecreated
+                ,
+                methods:{
+                //I do really need explanation about this
+                  add_product(){
+                    this.prod.productTypeId = this.select_productType.productTypeId;
+                    var url = '/product/add';
+                    var param= this.prod;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == 0){
+                               window.location = '/product/index';
+                          }
+                          else{
+                             //alert(res.exception);
+                             alert("added with some error");
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

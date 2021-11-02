@@ -1,0 +1,91 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/product/index'>Back</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>Importing New Arrival product using Excel, for manager</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+            <v-file-input
+            label="product file"
+            v-model="file1"
+            >
+            </v-file-input>
+            <v-btn
+            color="blue darken-3" class="white--text"
+            @@click="upload"
+            >
+                import new product file
+                <v-icon>mdi-import</v-icon>
+            </v-btn>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+
+                file1:null
+                ,
+                   list1:[]
+                }
+                ,
+                created(){
+                  
+                }
+                ,
+                methods:{
+                    upload(){
+                        //to get the attach file in the v-input-file
+                        //and then make a request to the server
+                        //using ajax is more boarder
+                        var data = new FormData();//this datatype is to submit the file to server
+                        //append is the function that take (<xx>,<NameFromVuejsData>)
+                        // xx = the name that will be encrypted and send it to server
+                        //it must match because it will be extracted later on in the server
+                        data.append("file1",this.file1);
+                        console.log(data);
+                        //make ajax
+                        var option = {
+                            type: "POST",
+                            enctype: 'multipart/form-data',
+                            url: "/product/import1",// controller/functionname
+                            data: data,//data this one comes fromt the data section of vuejs
+                            processData: false,
+                            contentType: false,
+                            cache: false,
+                            timeout: 30000,
+                            success: (res) => {
+                                console.log(res);
+                                window.location = '/product/index'
+                            },
+                            error: (error) => {
+                                console.log(error);
+                            },
+                        };//end of option object
+                        //each of this attribute of this object is the parameter
+                        //that will identify how this request in going to look like
+                        //then we throw this object into the ajax() function
+                        $.ajax(option);
+                    }//end of upload function
+                    ,
+                }//end of method
+                ,
+                 computed:{
+
+                 }
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

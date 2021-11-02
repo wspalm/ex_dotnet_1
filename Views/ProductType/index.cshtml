@@ -1,0 +1,132 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/product/index'>
+        Back</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>Hello!! Admin</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+            <v-btn @@click='add_item'>
+                Add type
+                <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-data-table :headers='headers' :items='types' class='elevation-1' />
+            <template v-slot:item.edits='{item}'>
+                <v-btn class="white--text" color="blue darken-1" @@click="edit_item(item)">
+                    <v-icon>
+                        mdi-pencil
+                    </v-icon>
+
+                </v-btn>
+            </template>
+            <template v-slot:item.deletes='{item}'>
+                <v-btn class="white--text" color="red darken-2" @@click="delete_item(item)">
+                    <v-icon>mdi-delete</v-icon>
+                </v-btn>
+            </template>
+
+            </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+<script>
+    var app;
+    var component = {
+        vuetify: new Vuetify(),
+        el: '#app1',
+        data: {
+            types: [] //this is the empty array that reserve for coming data from user
+                ,
+            headers: [
+                //the value in the header must be matched with the any attributes in the json object
+                //viewbag is the object that has sub attribute
+
+                
+                {
+                    text: 'Product Type ID',
+                    value: 'typeId',
+                    align: 'center',
+                    sortable: true
+                },
+                {
+                    text: 'Product Type Name',
+                    value: 'typeName',
+                    align: 'center',
+                    sortable: true
+                },
+                {
+                    text: 'Edit',
+                    value: 'edits',
+                    align: 'center',
+                    sortable: true
+                },
+                {
+                    text: 'Delete',
+                    value: 'deletes',
+                    align: 'center',
+                    sortable: true
+                },
+
+            ] //end of header array               
+        } //end of data
+        ,
+        created() {
+            //serialize function will take the list of object(viewbag) 
+            //and convert it into Json format
+            //then raw will convert that Json format into memory
+            //parse
+            this.types = @Html.Raw(Json.Serialize(@ViewBag.productTypes));
+            console.log(this.types);
+        },
+        methods: {
+            //some of this function will navigate to the site that help you to 
+            add_item() {
+                window.location = '/producttype/add';
+            } //end of additem function
+            ,
+            edit_item(item) {
+                //this item will be the input parameter of this function
+                //to receive the specified item and walk into factory 
+                //to alter it
+                window.location = '/producttype/edit/' + item.productTypeId;
+
+                //this producttypeID has to be the same name with the model 
+                //to make it link and be the same variable 
+                //when it is attached across the server
+            } //end of edititem function
+            ,
+            delete_item(item) {
+                //this url has to be the same as the controller
+                //Post: product/delete/productID
+
+                //confirm function will return boolean
+                //true false can be use in if as usual
+                if (confirm("Do you want to delete??")) {
+
+                    var url = '/producttype/delete/' + item.productTypeId;
+                    var param = this.prod;
+                    $.post(url, param)
+                        .done(res => {
+
+                            if (res.error == -1) {
+                                window.location = '/producttype/index';
+                            } else {
+                                alert(res.exception);
+                            }
+                        });
+                } //end of if
+            } //end of delete function
+            ,
+        },
+        computed: {
+
+        }
+    };
+    app = new Vue(component);
+</script>
+
+}
